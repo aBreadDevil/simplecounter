@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counter Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet"> 
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #4db8e5;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .container {
+      background: #90e0ef;
+      border-radius: 15px;
+      padding: 20px;
+      width: 300px;
+      margin: 50px auto;
+      text-align: center;
+    }
+
+    .counter-name {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #005b8e;
+    }
+
+    .counter-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #0088cc;
+      margin: 20px 0;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .increment {
+      background: #007acc;
+      color: white;
+    }
+
+    .decrement {
+      background: #005b8e;
+      color: white;
+    }
+
+    .back-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: #005b8e;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .back-button:hover {
+      background: #007acc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="counter-name" id="counterName">Counter Name</div>
+    <div class="counter-value" id="counterValue">0</div>
+    <div class="button-group">
+      <button class="decrement" onclick="updateCounter(-1)">-</button>
+      <button class="increment" onclick="updateCounter(1)">+</button>
+    </div>
+    <a href="index.html" class="back-button">Back</a>
+  </div>
+
+  <script>
+    const encrypt = (data) => btoa(JSON.stringify(data));
+    const decrypt = (data) => JSON.parse(atob(data));
+
+    function loadCounters() {
+      const encryptedData = localStorage.getItem('counters');
+      return encryptedData ? decrypt(encryptedData) : [];
+    }
+
+    function saveCounters(counters) {
+      localStorage.setItem('counters', encrypt(counters));
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const index = parseInt(urlParams.get('index'), 10);
+    const counters = loadCounters();
+    const counter = counters[index];
+
+    const counterNameElement = document.getElementById('counterName');
+    const counterValueElement = document.getElementById('counterValue');
+
+    counterNameElement.textContent = counter.name;
+    counterValueElement.textContent = counter.value;
+
+    function updateCounter(change) {
+      counter.value += change;
+      counterValueElement.textContent = counter.value;
+      saveCounters(counters);
+    }
+  </script>
+</body>
+</html>

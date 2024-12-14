@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Counter App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #00b4d8;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    h1 {
+      color: #00466e;
+      font-weight: 700;
+      font-size: 3rem; 
+    }
+
+    .counter-container {
+      color: #d4d4d4;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .counter-card, .new-card {
+      background: #90e0ef;
+      color: #0088cc;
+      border-radius: 10px;
+      padding: 20px;
+      width: 200px;
+      height: 150px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .counter-card:hover, .new-card:hover {
+      transform: scale(1.05);
+    }
+
+    .counter-card h3 {
+      margin: 0;
+      color: #005b8e;
+      font-weight: 600;
+    }
+
+    .counter-card span {
+      font-size: 1.2rem;
+      font-weight: 400;
+    }
+
+    .new-card {
+      background: #caf0f8;
+      color: #808080;
+    }
+
+    .new-card h3 {
+      color: #666;
+      font-weight: 600;
+    }
+
+    .trash-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .trash-button:hover {
+      background: #ff1a1a;
+    }
+  </style>
+</head>
+<body>
+  <h1>SIMPLE COUNTER</h1>
+  <div class="counter-container" id="counterContainer"></div>
+
+  <script>
+    const encrypt = (data) => btoa(JSON.stringify(data));
+    const decrypt = (data) => JSON.parse(atob(data));
+
+    function loadCounters() {
+      const encryptedData = localStorage.getItem('counters');
+      return encryptedData ? decrypt(encryptedData) : [];
+    }
+
+    function saveCounters(counters) {
+      localStorage.setItem('counters', encrypt(counters));
+    }
+
+    function renderCounters() {
+      const container = document.getElementById('counterContainer');
+      container.innerHTML = '';
+
+      counters.forEach(({ name, value }, index) => {
+        const counterCard = document.createElement('div');
+        counterCard.className = 'counter-card';
+        counterCard.innerHTML = `
+          <h3>${name}</h3>
+          <span>${value}</span>
+        `;
+
+        const trashButton = document.createElement('button');
+        trashButton.className = 'trash-button';
+        trashButton.innerHTML = '×';
+        trashButton.onclick = (event) => {
+          event.stopPropagation();
+          removeCounter(index);
+        };
+        counterCard.appendChild(trashButton);
+
+        counterCard.onclick = () => {
+          window.location.href = `detail.html?index=${index}`;
+        };
+
+        container.appendChild(counterCard);
+      });
+
+      const newCard = document.createElement('div');
+      newCard.className = 'new-card';
+      newCard.innerHTML = '<h3>New Card</h3>';
+      newCard.onclick = addCounter;
+      container.appendChild(newCard);
+    }
+
+    function addCounter() {
+      const name = prompt('Please enter a counter name');
+      if (name !== null && name.trim() !== '') {
+        counters.push({ name: name || 'New Card', value: 0 });
+        saveCounters(counters);
+        renderCounters();
+      }
+    }
+
+    function removeCounter(index) {
+      counters.splice(index, 1);
+      saveCounters(counters);
+      renderCounters();
+    }
+
+    let counters = loadCounters();
+    renderCounters();
+  </script>
+</body>
+</html>
